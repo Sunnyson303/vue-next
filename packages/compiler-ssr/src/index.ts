@@ -38,8 +38,10 @@ export function compile(
     inSSR: true,
     scopeId: options.mode === 'function' ? null : options.scopeId,
     // always prefix since compiler-ssr doesn't have size concern
+    // 全部加上前缀标识符因为 SSR 中不需要考虑打包大小 ？
     prefixIdentifiers: true,
     // disable optimizations that are unnecessary for ssr
+    // 关闭缓存优化因为 SSR 中不需要？
     cacheHandlers: false,
     hoistStatic: false
   }

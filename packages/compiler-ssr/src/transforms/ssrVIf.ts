@@ -15,6 +15,7 @@ import {
 } from '../ssrCodegenTransform'
 
 // Plugin for the first transform pass, which simply constructs the AST node
+// 第一个转换通道的插件，它简单地构建了AST节点
 export const ssrTransformIf = createStructuralDirectiveTransform(
   /^(if|else|else-if)$/,
   processIf
