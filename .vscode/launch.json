@@ -5,10 +5,10 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Jest",
+      "name": "vscode-jest-tests",
       "type": "node",
       "request": "launch",
-      "program": "${workspaceFolder}/node_modules/.bin/jest",
+      "program": "${workspaceFolder}/node_modules/jest/bin/jest",
       "stopOnEntry": false,
       "args": ["${fileBasename}", "--runInBand", "--detectOpenHandles"],
       "cwd": "${workspaceFolder}",

@@ -153,6 +153,10 @@ export interface VNode<
    * - Slot fragment vnodes with :slotted SFC styles.
    * - Component vnodes (during patch/hydration) so that its root node can
    *   inherit the component's slotScopeIds
+   * 仅限SFC。这被分配给。
+   * - 具有:开槽的SFC样式的开槽片段vnodes。
+   * - 组件vnodes（在补丁/水化期间），以便其根节点可以
+   * 继承该组件的slotScopeIds
    * @internal
    */
   slotScopeIds: string[] | null

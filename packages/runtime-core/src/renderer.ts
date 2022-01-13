@@ -1434,6 +1434,7 @@ function baseCreateRenderer(
         }
 
         // #2458: deference mount-only object parameters to prevent memleaks
+        // 尊重只挂载对象的参数以防止内存泄露
         initialVNode = container = anchor = null as any
       } else {
         // updateComponent
@@ -1548,6 +1549,8 @@ function baseCreateRenderer(
     update.id = instance.uid
     // allowRecurse
     // #1801, #2043 component render effects should allow recursive updates
+    // 允许递归
+    // 组件渲染效果应允许递归更新
     toggleRecurse(instance, true)
 
     if (__DEV__) {
