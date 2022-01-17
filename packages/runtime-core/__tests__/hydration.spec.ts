@@ -510,7 +510,7 @@ describe('SSR hydration', () => {
         Child
       },
     }
-    const container = document.createElement('div')
+    const container = document.createElement('div') 
     createApp(App).mount(container)
     expect(true).toEqual(true)
   });

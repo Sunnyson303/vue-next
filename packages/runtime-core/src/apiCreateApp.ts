@@ -280,6 +280,7 @@ export function createAppAPI<HostElement>(
         isSVG?: boolean
       ): any {
         if (!isMounted) {
+          // 创建根的虚拟节点
           const vnode = createVNode(
             rootComponent as ConcreteComponent,
             rootProps
@@ -295,6 +296,7 @@ export function createAppAPI<HostElement>(
             }
           }
 
+          // 通过 createSSRApp 创建
           if (isHydrate && hydrate) {
             hydrate(vnode as VNode<Node, Element>, rootContainer as any)
           } else {

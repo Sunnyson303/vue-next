@@ -316,6 +316,7 @@ function baseCreateRenderer(
 ): HydrationRenderer
 
 // implementation
+// 传入 node 操作方法跟属性 patch 方法
 function baseCreateRenderer(
   options: RendererOptions,
   createHydrationFns?: typeof createHydrationFunctions
@@ -1222,6 +1223,8 @@ function baseCreateRenderer(
       if (__DEV__) {
         startMeasure(instance, `init`)
       }
+
+      // 执行 setup 方法， 把返回的字段包裹成响应式对象
       setupComponent(instance)
       if (__DEV__) {
         endMeasure(instance, `init`)
@@ -1242,7 +1245,7 @@ function baseCreateRenderer(
       return
     }
 
-    // 监听副作用
+    // 监听render 函数副作用
     setupRenderEffect(
       instance,
       initialVNode,
@@ -1303,6 +1306,7 @@ function baseCreateRenderer(
     isSVG,
     optimized
   ) => {
+    // 组件更新副作用函数
     const componentUpdateFn = () => {
       if (!instance.isMounted) {
         let vnodeHook: VNodeHook | null | undefined
@@ -1371,6 +1375,7 @@ function baseCreateRenderer(
           if (__DEV__) {
             startMeasure(instance, `render`)
           }
+          // 根据根组件 render 函数生成 vdom tree
           const subTree = (instance.subTree = renderComponentRoot(instance))
           if (__DEV__) {
             endMeasure(instance, `render`)
@@ -1546,7 +1551,7 @@ function baseCreateRenderer(
     }
 
     // create reactive effect for rendering
-    // 创建副作用，绑定更新函数
+    // 创建组件更新的副作用函数
     const effect = (instance.effect = new ReactiveEffect(
       componentUpdateFn,
       () => queueJob(instance.update),
