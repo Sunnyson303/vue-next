@@ -748,6 +748,7 @@ export function registerRuntimeCompiler(_compile: any) {
 // dev only
 export const isRuntimeOnly = () => !compile
 
+// 根据  template 转化 render
 export function finishComponentSetup(
   instance: ComponentInternalInstance,
   isSSR: boolean,

@@ -143,6 +143,7 @@ const shallowUnwrapHandlers: ProxyHandler<any> = {
   }
 }
 
+// 用 Proxy 包装下
 export function proxyRefs<T extends object>(
   objectWithRefs: T
 ): ShallowUnwrapRef<T> {

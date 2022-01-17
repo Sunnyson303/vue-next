@@ -1179,6 +1179,8 @@ function baseCreateRenderer(
     }
   }
 
+
+  // 组件挂载
   const mountComponent: MountComponentFn = (
     initialVNode,
     container,
@@ -1192,6 +1194,7 @@ function baseCreateRenderer(
     // mounting
     const compatMountInstance =
       __COMPAT__ && initialVNode.isCompatRoot && initialVNode.component
+    // 创建组件实例
     const instance: ComponentInternalInstance =
       compatMountInstance ||
       (initialVNode.component = createComponentInstance(
@@ -1239,6 +1242,7 @@ function baseCreateRenderer(
       return
     }
 
+    // 监听副作用
     setupRenderEffect(
       instance,
       initialVNode,
@@ -1542,6 +1546,7 @@ function baseCreateRenderer(
     }
 
     // create reactive effect for rendering
+    // 创建副作用，绑定更新函数
     const effect = (instance.effect = new ReactiveEffect(
       componentUpdateFn,
       () => queueJob(instance.update),

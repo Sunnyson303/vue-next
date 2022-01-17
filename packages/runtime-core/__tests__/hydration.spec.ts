@@ -1,5 +1,6 @@
 import {
   createSSRApp,
+  createApp,
   h,
   ref,
   nextTick,
@@ -457,6 +458,62 @@ describe('SSR hydration', () => {
     await nextTick()
     expect(text.textContent).toBe('bye')
   })
+
+  test('handle createApp', () => {
+    const mounted: string[] = []
+    const log = jest.fn()
+    const toggle = ref(true)
+
+    const Child = {
+      setup() {
+        const count = ref(0)
+        const text = ref('hello')
+        const style = reactive({
+          color: 'red'
+        })
+        return { count, text, style }
+      },
+      mounted() {
+        mounted.push('child')
+      },
+      template: `
+      <div>
+        <span class="count" :style="style">{{ count }}</span>
+        <button class="inc" @click="count++">inc</button>
+        <button class="change" @click="style.color = 'green'" >change color</button>
+        <button class="emit" @click="$emit('foo')">emit</button>
+        <span class="text">{{ text }}</span>
+        <input v-model="text">
+      </div>
+      `
+    }
+
+    const App = {
+      setup() {
+        onMounted(() => {
+          mounted.push('parent')
+        })
+        return { toggle, log }
+      },
+      template: `
+        <div>
+          <span>hello</span>
+          <template v-if="toggle">
+            <Child @foo="log('child')"/>
+            <template v-if="true">
+              <button class="parent-click" @click="log('click')">click me</button>
+            </template>
+          </template>
+          <span>hello</span>
+        </div>`,
+      components: {
+        Child
+      },
+    }
+    const container = document.createElement('div')
+    createApp(App).mount(container)
+    expect(true).toEqual(true)
+  });
 
   test('handle click error in ssr mode', async () => {
     const App = {
