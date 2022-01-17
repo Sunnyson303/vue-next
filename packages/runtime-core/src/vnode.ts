@@ -221,6 +221,10 @@ export interface VNode<
 // can divide a template into nested blocks, and within each block the node
 // structure would be stable. This allows us to skip most children diffing
 // and only worry about the dynamic nodes (indicated by patch flags).
+// 由于v-if和v-for是节点结构可以动态
+// 改变的两种可能方式，一旦我们把v-if分支和每个v-for片段视为一个块，我们就可以将模板分成嵌套的块，在每个块中节点
+// 结构是稳定的。这允许我们跳过大多数子节点的
+// 只关心动态节点(由补丁标志表示)。
 export const blockStack: (VNode[] | null)[] = []
 export let currentBlock: VNode[] | null = null
 
@@ -596,6 +600,7 @@ export function cloneVNode<T, U>(
 ): VNode<T, U> {
   // This is intentionally NOT using spread or extend to avoid the runtime
   // key enumeration cost.
+  // 这是故意不使用 ... 或 继承来避免运行时的键枚举成本。
   const { props, ref, patchFlag, children } = vnode
   const mergedProps = extraProps ? mergeProps(props || {}, extraProps) : props
   const cloned: VNode = {

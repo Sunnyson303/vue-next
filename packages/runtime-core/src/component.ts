@@ -733,6 +733,7 @@ let installWithProxy: (i: ComponentInternalInstance) => void
 /**
  * For runtime-dom to register the compiler.
  * Note the exported method uses any to avoid d.ts relying on the compiler types.
+ * 为运行时dom注册编译器。注意导出的方法使用了any来避免依赖于编译器类型的d.ts。
  */
 export function registerRuntimeCompiler(_compile: any) {
   compile = _compile

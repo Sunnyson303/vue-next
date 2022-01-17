@@ -13,7 +13,8 @@ import {
   createTextVNode,
   createVNode,
   withDirectives,
-  vModelCheckbox
+  vModelCheckbox,
+  reactive
 } from '@vue/runtime-dom'
 import { renderToString, SSRContext } from '@vue/server-renderer'
 import { PatchFlags } from '../../shared/src'
@@ -373,14 +374,13 @@ describe('SSR hydration', () => {
     const toggle = ref(true)
 
     const Child = {
-      data() {
-        return {
-          count: 0,
-          text: 'hello',
-          style: {
-            color: 'red'
-          }
-        }
+      setup() {
+        const count = ref(0)
+        const text = ref('hello')
+        const style = reactive({
+          color: 'red'
+        })
+        return { count, text, style }
       },
       mounted() {
         mounted.push('child')
@@ -399,10 +399,10 @@ describe('SSR hydration', () => {
 
     const App = {
       setup() {
-        return { toggle }
-      },
-      mounted() {
-        mounted.push('parent')
+        onMounted(() => {
+          mounted.push('parent')
+        })
+        return { toggle, log }
       },
       template: `
         <div>
@@ -418,9 +418,6 @@ describe('SSR hydration', () => {
       components: {
         Child
       },
-      methods: {
-        log
-      }
     }
 
     const container = document.createElement('div')

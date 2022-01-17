@@ -5,6 +5,8 @@ import { setBlockTracking } from './vnode'
 /**
  * mark the current rendering instance for asset resolution (e.g.
  * resolveComponent, resolveDirective) during render
+ * 标记当前渲染实例进行资产解析（例如
+ * resolveComponent, resolveDirective）在渲染过程中。
  */
 export let currentRenderingInstance: ComponentInternalInstance | null = null
 export let currentScopeId: string | null = null
@@ -13,6 +15,9 @@ export let currentScopeId: string | null = null
  * Note: rendering calls maybe nested. The function returns the parent rendering
  * instance if present, which should be restored after the render is done:
  *
+ * 注意：渲染调用可能是嵌套的。该函数返回父渲染
+ * 实例（如果存在的话），在渲染完成后应该恢复该实例。
+ * 
  * ```js
  * const prev = setCurrentRenderingInstance(i)
  * // ...render

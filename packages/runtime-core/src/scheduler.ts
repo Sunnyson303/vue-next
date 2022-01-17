@@ -136,6 +136,8 @@ function queueCb(
     // if cb is an array, it is a component lifecycle hook which can only be
     // triggered by a job, which is already deduped in the main queue, so
     // we can skip duplicate check here to improve perf
+    // 如果cb是一个数组，它是一个组件生命周期钩子，只能由一个job触发，而job已经在主队列中被重复数据删除了，所以
+    // 我们可以在这里跳过重复检查以提高性能
     pendingQueue.push(...cb)
   }
   queueFlush()

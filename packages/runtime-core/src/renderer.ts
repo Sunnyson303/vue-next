@@ -1328,6 +1328,7 @@ function baseCreateRenderer(
 
         if (el && hydrateNode) {
           // vnode has adopted host node - perform hydration instead of mount.
+          // vnode 已经挂载了容器节点--执行水化而不是挂载
           const hydrateSubTree = () => {
             if (__DEV__) {
               startMeasure(instance, `render`)
@@ -1440,6 +1441,8 @@ function baseCreateRenderer(
         // updateComponent
         // This is triggered by mutation of component's own state (next: null)
         // OR parent calling processComponent (next: VNode)
+        // 组件的状态发生变化时触发(next: null) 
+        // 或父组件调用processComponent(下一个:VNode)
         let { next, bu, u, parent, vnode } = instance
         let originNext = next
         let vnodeHook: VNodeHook | null | undefined

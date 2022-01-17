@@ -33,6 +33,11 @@ async function unrollBuffer(buffer: SSRBuffer): Promise<string> {
   }
 }
 
+/**
+ * buffer 数组拼接成字符串
+ * @param buffer 
+ * @returns 
+ */
 function unrollBufferSync(buffer: SSRBuffer): string {
   let ret = ''
   for (let i = 0; i < buffer.length; i++) {
@@ -57,6 +62,7 @@ export async function renderToString(
   }
 
   // rendering an app
+  // app 
   const vnode = createVNode(input._component, input._props)
   vnode.appContext = input._context
   // provide the ssr context to the tree

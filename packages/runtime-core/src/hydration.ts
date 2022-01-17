@@ -183,6 +183,7 @@ export function createHydrationFunctions(
           // when setting up the render effect, if the initial vnode already
           // has .el set, the component will perform hydration instead of mount
           // on its sub-tree.
+          // 当设置渲染效果时，如果初始的vnode已经设置了.el，组件将在其子树上执行水合而不是挂载。
           vnode.slotScopeIds = slotScopeIds
           const container = parentNode(node)!
           mountComponent(
