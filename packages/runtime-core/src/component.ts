@@ -631,6 +631,7 @@ function setupStatefulComponent(
   instance.accessCache = Object.create(null)
   // 1. create public instance / render proxy
   // also mark it raw so it's never observed
+  // 添加 __v_skip 标志，使实例方法不执行 observed
   instance.proxy = markRaw(new Proxy(instance.ctx, PublicInstanceProxyHandlers))
   if (__DEV__) {
     exposePropsOnRenderContext(instance)
