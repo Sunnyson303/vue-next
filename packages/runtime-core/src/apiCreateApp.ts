@@ -296,7 +296,7 @@ export function createAppAPI<HostElement>(
             }
           }
 
-          // 通过 createSSRApp 创建
+          // 通过 createSSRApp 创建，进入客户端激活流程
           if (isHydrate && hydrate) {
             hydrate(vnode as VNode<Node, Element>, rootContainer as any)
           } else {
