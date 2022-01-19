@@ -446,6 +446,7 @@ const emptyAppContext = createAppContext()
 
 let uid = 0
 
+// 初始化组件实例
 export function createComponentInstance(
   vnode: VNode,
   parent: ComponentInternalInstance | null,
@@ -800,6 +801,8 @@ export function finishComponentSetup(
             extend(finalCompilerOptions.compatConfig, Component.compatConfig)
           }
         }
+
+        // 根据模板编译 render 函数
         Component.render = compile(template, finalCompilerOptions)
         if (__DEV__) {
           endMeasure(instance, `compile`)

@@ -56,13 +56,14 @@ export async function renderToString(
   input: App | VNode,
   context: SSRContext = {}
 ): Promise<string> {
+  // 不是 App 实例
   if (isVNode(input)) {
     // raw vnode, wrap with app (for context)
     return renderToString(createApp({ render: () => input }), context)
   }
 
   // rendering an app
-  // app 
+  // 创建组件 vnode
   const vnode = createVNode(input._component, input._props)
   vnode.appContext = input._context
   // provide the ssr context to the tree

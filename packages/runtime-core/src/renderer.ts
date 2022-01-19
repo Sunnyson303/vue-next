@@ -1143,6 +1143,7 @@ function baseCreateRenderer(
     }
   }
 
+  // 组件渲染
   const processComponent = (
     n1: VNode | null,
     n2: VNode,
@@ -1195,7 +1196,7 @@ function baseCreateRenderer(
     // mounting
     const compatMountInstance =
       __COMPAT__ && initialVNode.isCompatRoot && initialVNode.component
-    // 创建组件实例
+    // 创建组件实例, 初始化组件上下文
     const instance: ComponentInternalInstance =
       compatMountInstance ||
       (initialVNode.component = createComponentInstance(
@@ -1245,7 +1246,7 @@ function baseCreateRenderer(
       return
     }
 
-    // 监听render 函数副作用
+    // 监听render 函数副作用，
     setupRenderEffect(
       instance,
       initialVNode,
@@ -1315,7 +1316,9 @@ function baseCreateRenderer(
         const isAsyncWrapperVNode = isAsyncWrapper(initialVNode)
 
         toggleRecurse(instance, false)
+
         // beforeMount hook
+        // 调用 beforeMounted 勾子
         if (bm) {
           invokeArrayFns(bm)
         }
@@ -1383,6 +1386,8 @@ function baseCreateRenderer(
           if (__DEV__) {
             startMeasure(instance, `patch`)
           }
+
+          //  通过 patch 方法将 vnode 渲染成真实 dom
           patch(
             null,
             subTree,
@@ -1397,7 +1402,9 @@ function baseCreateRenderer(
           }
           initialVNode.el = subTree.el
         }
+        
         // mounted hook
+        // 调用 mounted 勾子
         if (m) {
           queuePostRenderEffect(m, parentSuspense)
         }

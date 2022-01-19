@@ -78,6 +78,7 @@ export function createBuffer() {
   }
 }
 
+// 渲染虚拟 dom tree
 export function renderComponentVNode(
   vnode: VNode,
   parentComponent: ComponentInternalInstance | null = null,
@@ -119,6 +120,7 @@ function renderComponentSubTree(
       slotScopeId
     )
   } else {
+    // 通过模板编译 ssrRender 函数
     if (
       (!instance.render || instance.render === NOOP) &&
       !instance.ssrRender &&
