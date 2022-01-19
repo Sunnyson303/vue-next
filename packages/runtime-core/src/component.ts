@@ -580,6 +580,12 @@ export function isStatefulComponent(instance: ComponentInternalInstance) {
 
 export let isInSSRComponentSetup = false
 
+/**
+  1. 执行我们写的 setup 方法，
+  2. handleSetupResult：判断 setup中返回的是对象还是函数，如果是函数，表示是 render 函数，否则，把 返回的对象进行响应式包装
+  3. finishComponentSetup：最后执行 finishComponentSetup方法，判断实例有没有  render 方法，没有的话会通过 compiler 模块把template 编译成 render 函数
+ * 
+ */
 export function setupComponent(
   instance: ComponentInternalInstance,
   isSSR = false
@@ -632,7 +638,6 @@ function setupStatefulComponent(
   instance.accessCache = Object.create(null)
   // 1. create public instance / render proxy
   // also mark it raw so it's never observed
-  // 添加 __v_skip 标志，使实例方法不执行 observed
   instance.proxy = markRaw(new Proxy(instance.ctx, PublicInstanceProxyHandlers))
   if (__DEV__) {
     exposePropsOnRenderContext(instance)
@@ -689,6 +694,7 @@ export function handleSetupResult(
   setupResult: unknown,
   isSSR: boolean
 ) {
+  // 返回的 render 函数
   if (isFunction(setupResult)) {
     // setup returned an inline render function
     if (__SSR__ && (instance.type as ComponentOptions).__ssrInlineRender) {
@@ -750,7 +756,7 @@ export function registerRuntimeCompiler(_compile: any) {
 // dev only
 export const isRuntimeOnly = () => !compile
 
-// 根据  template 转化 render
+// 根据 template 编译 render
 export function finishComponentSetup(
   instance: ComponentInternalInstance,
   isSSR: boolean,
@@ -801,8 +807,7 @@ export function finishComponentSetup(
             extend(finalCompilerOptions.compatConfig, Component.compatConfig)
           }
         }
-
-        // 根据模板编译 render 函数
+        // 根据 template 编译 render 函数
         Component.render = compile(template, finalCompilerOptions)
         if (__DEV__) {
           endMeasure(instance, `compile`)

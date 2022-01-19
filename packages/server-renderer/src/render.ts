@@ -84,7 +84,9 @@ export function renderComponentVNode(
   parentComponent: ComponentInternalInstance | null = null,
   slotScopeId?: string
 ): SSRBuffer | Promise<SSRBuffer> {
+  // 1. 创建组件实例
   const instance = createComponentInstance(vnode, parentComponent, null)
+  // 2. 执行 setup 方法
   const res = setupComponent(instance, true /* isSSR */)
   const hasAsyncSetup = isPromise(res)
   const prefetches = instance.sp
@@ -102,6 +104,7 @@ export function renderComponentVNode(
     }
     return p.then(() => renderComponentSubTree(instance, slotScopeId))
   } else {
+    // 3. 创建子树
     return renderComponentSubTree(instance, slotScopeId)
   }
 }
@@ -134,7 +137,6 @@ function renderComponentSubTree(
     if (ssrRender) {
       // optimized
       // resolve fallthrough attrs
-      // 解决突破性属性的问题
       let attrs = instance.inheritAttrs !== false ? instance.attrs : undefined
       let hasCloned = false
 
@@ -196,6 +198,7 @@ function renderComponentSubTree(
   return getBuffer()
 }
 
+// 虚拟 dom 转化成字符串
 export function renderVNode(
   push: PushFn,
   vnode: VNode,
@@ -216,6 +219,7 @@ export function renderVNode(
       push(children as string)
       break
     case Fragment:
+      // 文档片段，递归执行 renderVNode, 把所有节点转化为字符串
       if (vnode.slotScopeIds) {
         slotScopeId =
           (slotScopeId ? slotScopeId + ' ' : '') + vnode.slotScopeIds.join(' ')

@@ -39,6 +39,9 @@ let renderer: Renderer<Element | ShadowRoot> | HydrationRenderer
 
 let enabledHydration = false
 
+// 通过 ensureRenderer 创建一个渲染器，
+// 渲染器接收一个  rendererOptions 对象，
+// 对象中包含了浏览器中操作 dom 的方法以及属性 patch 的方法
 function ensureRenderer() {
   return (
     renderer ||
@@ -72,7 +75,9 @@ export const createApp = ((...args) => {
   }
 
   const { mount } = app
+  // 重写 mount 方法，区分客户端还是服务端
   app.mount = (containerOrSelector: Element | ShadowRoot | string): any => {
+    // 可能是选择器, 统一转换成 Node
     const container = normalizeContainer(containerOrSelector)
     if (!container) return
 

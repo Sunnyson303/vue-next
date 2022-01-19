@@ -316,7 +316,7 @@ function baseCreateRenderer(
 ): HydrationRenderer
 
 // implementation
-// 传入 node 操作方法跟属性 patch 方法
+// 传入 node 操作跟属性 patch 方法
 function baseCreateRenderer(
   options: RendererOptions,
   createHydrationFns?: typeof createHydrationFunctions
@@ -366,6 +366,7 @@ function baseCreateRenderer(
     }
 
     // patching & not same type, unmount old tree
+    // 不同节点，直接卸载
     if (n1 && !isSameVNodeType(n1, n2)) {
       anchor = getNextHostNode(n1)
       unmount(n1, parentComponent, parentSuspense, true)
@@ -1181,7 +1182,6 @@ function baseCreateRenderer(
     }
   }
 
-
   // 组件挂载
   const mountComponent: MountComponentFn = (
     initialVNode,
@@ -1195,8 +1195,8 @@ function baseCreateRenderer(
     // 2.x compat may pre-create the component instance before actually
     // mounting
     const compatMountInstance =
-      __COMPAT__ && initialVNode.isCompatRoot && initialVNode.component
-    // 创建组件实例, 初始化组件上下文
+    __COMPAT__ && initialVNode.isCompatRoot && initialVNode.component
+    // 1.创建组件实例,定义 uid、update 等属性
     const instance: ComponentInternalInstance =
       compatMountInstance ||
       (initialVNode.component = createComponentInstance(
@@ -1225,7 +1225,9 @@ function baseCreateRenderer(
         startMeasure(instance, `init`)
       }
 
+      // 2.
       // 执行 setup 方法， 把返回的字段包裹成响应式对象
+      // 判断是否有 render 函数，没有 render 函数通过 compiler 把 template 编译成 render 函数
       setupComponent(instance)
       if (__DEV__) {
         endMeasure(instance, `init`)
@@ -1246,7 +1248,9 @@ function baseCreateRenderer(
       return
     }
 
-    // 监听render 函数副作用，
+    // 3.
+    // 创建组件的更新函数并执行
+    // 添加数据更新的组件更新副作用函数
     setupRenderEffect(
       instance,
       initialVNode,
@@ -1307,7 +1311,7 @@ function baseCreateRenderer(
     isSVG,
     optimized
   ) => {
-    // 组件更新副作用函数
+    // 创建组件的更新函数
     const componentUpdateFn = () => {
       if (!instance.isMounted) {
         let vnodeHook: VNodeHook | null | undefined
@@ -1318,7 +1322,7 @@ function baseCreateRenderer(
         toggleRecurse(instance, false)
 
         // beforeMount hook
-        // 调用 beforeMounted 勾子
+        // 执行  beforeMounted 勾子
         if (bm) {
           invokeArrayFns(bm)
         }
@@ -1378,7 +1382,7 @@ function baseCreateRenderer(
           if (__DEV__) {
             startMeasure(instance, `render`)
           }
-          // 根据根组件 render 函数生成 vdom tree
+          // 调用 setupComponent 中编译的 render 函数生成子树
           const subTree = (instance.subTree = renderComponentRoot(instance))
           if (__DEV__) {
             endMeasure(instance, `render`)
@@ -1387,7 +1391,7 @@ function baseCreateRenderer(
             startMeasure(instance, `patch`)
           }
 
-          //  通过 patch 方法将 vnode 渲染成真实 dom
+          // 再次调用 patch，完成组件的递归调用，整个组件 dom 树就此挂载完成。
           patch(
             null,
             subTree,
@@ -1404,7 +1408,7 @@ function baseCreateRenderer(
         }
         
         // mounted hook
-        // 调用 mounted 勾子
+        // 执行 mounted 勾子
         if (m) {
           queuePostRenderEffect(m, parentSuspense)
         }
@@ -1451,7 +1455,6 @@ function baseCreateRenderer(
         }
 
         // #2458: deference mount-only object parameters to prevent memleaks
-        // 尊重只挂载对象的参数以防止内存泄露
         initialVNode = container = anchor = null as any
       } else {
         // updateComponent
@@ -1558,19 +1561,18 @@ function baseCreateRenderer(
     }
 
     // create reactive effect for rendering
-    // 创建组件更新的副作用函数
+    // 添加一个监听数据更新的副作用函数，绑定组件的 update 方法到 effect.run 上， 这样数据发生变化时组件就会进行更新了。
     const effect = (instance.effect = new ReactiveEffect(
       componentUpdateFn,
       () => queueJob(instance.update),
       instance.scope // track it in component's effect scope
     ))
 
+    // update 绑定副作用的 run 函数， 这样 setup 中的响应式对象更新后会触发执行
     const update = (instance.update = effect.run.bind(effect) as SchedulerJob)
     update.id = instance.uid
     // allowRecurse
     // #1801, #2043 component render effects should allow recursive updates
-    // 允许递归
-    // 组件渲染效果应允许递归更新
     toggleRecurse(instance, true)
 
     if (__DEV__) {
@@ -1583,7 +1585,7 @@ function baseCreateRenderer(
       // @ts-ignore (for scheduler)
       update.ownerInstance = instance
     }
-
+    // 最后 执行组件更新方法
     update()
   }
 
