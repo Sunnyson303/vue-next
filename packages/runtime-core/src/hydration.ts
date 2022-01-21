@@ -49,6 +49,7 @@ const isComment = (node: Node): node is Comment =>
 // it out creates a ton of unnecessary complexity.
 // Hydration also depends on some renderer internal logic which needs to be
 // passed in via arguments.
+
 export function createHydrationFunctions(
   rendererInternals: RendererInternals<Node, Element>
 ) {
@@ -101,6 +102,7 @@ export function createHydrationFunctions(
     const domType = node.nodeType
     vnode.el = node
 
+    // ssr 渲染的真实 DOM 跟 vnode 做匹配
     let nextNode: Node | null = null
     switch (type) {
       case Text:

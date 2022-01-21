@@ -40,8 +40,9 @@ let renderer: Renderer<Element | ShadowRoot> | HydrationRenderer
 let enabledHydration = false
 
 // 通过 ensureRenderer 创建一个渲染器，
-// 渲染器接收一个  rendererOptions 对象，
-// 对象中包含了浏览器中操作 dom 的方法以及属性 patch 的方法
+// 渲染器接收一个  rendererOptions 参数，
+// 参数中包含了浏览器中操作 dom 的方法以及属性 patch 的方法
+// vue 3 把节点与属性的操作集都移到外部，保证了平台渲染无关性，使用 vue 可以在小程序、canvas等别的平台上渲染
 function ensureRenderer() {
   return (
     renderer ||
@@ -67,6 +68,8 @@ export const hydrate = ((...args) => {
 }) as RootHydrateFunction
 
 export const createApp = ((...args) => {
+  // 1. 初始化渲染器
+  // 2. 实例化 app 
   const app = ensureRenderer().createApp(...args)
 
   if (__DEV__) {
@@ -75,7 +78,7 @@ export const createApp = ((...args) => {
   }
 
   const { mount } = app
-  // 重写 mount 方法，区分客户端还是服务端
+  // 重写 mount 方法，挂载的时候不需要激活
   app.mount = (containerOrSelector: Element | ShadowRoot | string): any => {
     // 可能是选择器, 统一转换成 Node
     const container = normalizeContainer(containerOrSelector)
@@ -117,6 +120,7 @@ export const createApp = ((...args) => {
 }) as CreateAppFunction<Element>
 
 export const createSSRApp = ((...args) => {
+  // 带有激活函数的渲染器
   const app = ensureHydrationRenderer().createApp(...args)
 
   if (__DEV__) {

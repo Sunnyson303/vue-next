@@ -171,7 +171,6 @@ export function h<P>(
 ): VNode
 
 // Actual implementation
-// render 函数
 export function h(type: any, propsOrChildren?: any, children?: any): VNode {
   const l = arguments.length
   if (l === 2) {

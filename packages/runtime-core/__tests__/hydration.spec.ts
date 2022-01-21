@@ -368,8 +368,7 @@ describe('SSR hydration', () => {
     )
   })
 
-  // compile SSR + client render fn from the same template & hydrate
-  test('full compiler integration', async () => {
+  test('server createSSRApp', async () => {
     const mounted: string[] = []
 
     const Child = {
@@ -409,13 +408,14 @@ describe('SSR hydration', () => {
     // server render
     container.innerHTML = await renderToString(h(App))
     // hydrate
-    const app = createSSRApp(App)
-    app.mount(container)
+    createSSRApp(App).mount(container)
 
     expect(container.children[0].className).toEqual('parent')
+    await nextTick()
+    expect(mounted.join()).toEqual('child,parent')
   })
 
-  test('handle createApp', () => {
+  test('client createApp', () => {
     const mounted: string[] = []
 
     const Child = {

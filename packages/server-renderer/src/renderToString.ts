@@ -56,23 +56,24 @@ export async function renderToString(
   input: App | VNode,
   context: SSRContext = {}
 ): Promise<string> {
-  // 不是 app 实例
+  // 如果是原始的 vnode ，需要包装为 app 实例，重新调用 renderToString 方法
   if (isVNode(input)) {
     // raw vnode, wrap with app (for context)
     return renderToString(createApp({ render: () => input }), context)
   }
 
   // rendering an app
-  // 创建组件 vnode
+  // 创建实例的组件 vnode
   const vnode = createVNode(input._component, input._props)
   vnode.appContext = input._context
   // provide the ssr context to the tree
   input.provide(ssrContextKey, context)
-  // 组件渲染 dom 渲染
+  // vnode 渲染成字符串
   const buffer = await renderComponentVNode(vnode)
 
   await resolveTeleports(context)
 
+  // 多维数据打平
   return unrollBuffer(buffer as SSRBuffer)
 }
 

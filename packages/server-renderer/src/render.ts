@@ -104,7 +104,7 @@ export function renderComponentVNode(
     }
     return p.then(() => renderComponentSubTree(instance, slotScopeId))
   } else {
-    // 3. 创建子树
+    // 3. 创建组件的子树
     return renderComponentSubTree(instance, slotScopeId)
   }
 }
@@ -123,13 +123,14 @@ function renderComponentSubTree(
       slotScopeId
     )
   } else {
-    // 通过模板编译 ssrRender 函数
+    
     if (
       (!instance.render || instance.render === NOOP) &&
       !instance.ssrRender &&
       !comp.ssrRender &&
       isString(comp.template)
-    ) {
+      ) {
+      // 通过模板编译 ssrRender 函数
       comp.ssrRender = ssrCompile(comp.template, instance)
     }
 
@@ -180,6 +181,7 @@ function renderComponentSubTree(
       )
       setCurrentRenderingInstance(prev)
     } else if (instance.render && instance.render !== NOOP) {
+      // 通过 template 注册的 app 实例，暂没有 ssrRender 方法，调用 renderVnode 
       renderVNode(
         push,
         (instance.subTree = renderComponentRoot(instance)),
@@ -198,7 +200,7 @@ function renderComponentSubTree(
   return getBuffer()
 }
 
-// 虚拟 dom 转化成字符串
+// 处理各种类型节点，通过 push 保存到 buffer 对象里
 export function renderVNode(
   push: PushFn,
   vnode: VNode,

@@ -300,6 +300,7 @@ export function createRenderer<
 export function createHydrationRenderer(
   options: RendererOptions<Node, Element>
 ) {
+  // 创建带有客户端激活方法的渲染器
   return baseCreateRenderer(options, createHydrationFunctions)
 }
 
@@ -1250,7 +1251,7 @@ function baseCreateRenderer(
 
     // 3.
     // 创建组件的更新函数并执行
-    // 添加数据更新的组件更新副作用函数
+    // 绑定数据更新的组件更新副作用
     setupRenderEffect(
       instance,
       initialVNode,
@@ -1391,7 +1392,7 @@ function baseCreateRenderer(
             startMeasure(instance, `patch`)
           }
 
-          // 再次调用 patch，完成组件的递归调用，整个组件 dom 树就此挂载完成。
+          // 再次调用 patch，完成组件的递归调用，完成整个组件 dom 树的挂载。
           patch(
             null,
             subTree,
@@ -1561,14 +1562,12 @@ function baseCreateRenderer(
     }
 
     // create reactive effect for rendering
-    // 添加一个监听数据更新的副作用函数，绑定组件的 update 方法到 effect.run 上， 这样数据发生变化时组件就会进行更新了。
+    // 添加一个监听数据更副作用函数， 这样数据发生变化时组件就会进行更新了。
     const effect = (instance.effect = new ReactiveEffect(
       componentUpdateFn,
       () => queueJob(instance.update),
       instance.scope // track it in component's effect scope
     ))
-
-    // update 绑定副作用的 run 函数， 这样 setup 中的响应式对象更新后会触发执行
     const update = (instance.update = effect.run.bind(effect) as SchedulerJob)
     update.id = instance.uid
     // allowRecurse
@@ -2349,6 +2348,7 @@ function baseCreateRenderer(
   let hydrate: ReturnType<typeof createHydrationFunctions>[0] | undefined
   let hydrateNode: ReturnType<typeof createHydrationFunctions>[1] | undefined
   if (createHydrationFns) {
+    // 生成激活函数
     ;[hydrate, hydrateNode] = createHydrationFns(
       internals as RendererInternals<Node, Element>
     )
